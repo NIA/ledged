@@ -27,6 +27,17 @@ public class Parser {
                 }
             },
 
+            // year
+            new LineProcessor() {
+                public boolean canProcess(char firstChar) {
+                    return firstChar == 'Y';
+                }
+                public void process(String line) throws ParserException {
+                    finishTransaction();
+                    transactionHandler.setYear(line.substring(1));
+                }
+            },
+
             // transaction description
             new LineProcessor() {
                 public boolean canProcess(char firstChar) {

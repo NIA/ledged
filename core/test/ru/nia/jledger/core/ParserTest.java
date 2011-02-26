@@ -148,10 +148,24 @@ public class ParserTest {
     }
 
     @Test
-    @Ignore
     public void testParseYearSet() throws Exception {
+        handler.setYear("2011");
         parse(
                 "Y2011"
+        );
+    }
+
+    @Test(expected = Parser.ParserException.class)
+    public void testThrowWhenYearBreaksTransaction() throws Exception {
+        handler.start("2011-2-26", "first transaction");
+        handler.addPosting("expenses", "10");
+        handler.finish();
+        handler.setYear("2012");
+        parse(
+                "2011-2-26 first transaction",
+                "  expenses  10",
+                "Y2012",
+                "  assets"
         );
     }
 }
