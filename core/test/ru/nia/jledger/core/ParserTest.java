@@ -128,9 +128,22 @@ public class ParserTest {
     }
 
     @Test(expected = Parser.ParserException.class)
-    public void testThrowWhenFieldIsOutsideTransaction() throws Exception {
+    public void testThrowWhenPostingIsOutsideTransaction() throws Exception {
         parse(
                 "  expenses  10"
+        );
+    }
+
+    @Test(expected = Parser.ParserException.class)
+    public void testThrowWhenEmptyLineBreaksTransaction() throws Exception {
+        handler.start("2011-2-26", "first transaction");
+        handler.addPosting("expenses", "10");
+        handler.finish();
+        parse(
+                "2011-2-26 first transaction",
+                "  expenses  10",
+                "",
+                "  assets"
         );
     }
 

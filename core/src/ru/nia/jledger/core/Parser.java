@@ -33,15 +33,13 @@ public class Parser {
                     return Character.isDigit(firstChar);
                 }
                 public void process(String line) throws ParserException {
-                    if (inTransaction) {
-                        transactionHandler.finish();
-                    }
-                    inTransaction = true;
+                    finishTransaction();
 
                     String[] groups = matchGroups(line, "^([^\\s]+)\\s+(.+)?$");
                     String date = groups[1];
                     String description = (groups[2] != null) ? groups[2].trim() : null;
                     transactionHandler.start(date, description);
+                    inTransaction = true;
                 }
             },
 
@@ -52,7 +50,7 @@ public class Parser {
                 }
                 public void process(String line) throws ParserException {
                     if (!inTransaction) {
-                        throw new ParserException("transaction posting outside transaction", line);
+                        throw new ParserException("line begins with whitespace outside transaction", line);
                     }
 
                     String[] groups = matchGroups(line, "^\\s+((?:[^\\s]| (?!\\s))*)(?:(?:\\s{2,}|\t\\s*)([^;]+)?)?\\s*(?:;.*)?$");
@@ -81,6 +79,7 @@ public class Parser {
                 break;
             }
             if (line.isEmpty()) {
+                finishTransaction();
                 continue;
             }
 
@@ -114,5 +113,12 @@ public class Parser {
             parts[i] = matcher.group(i);
         }
         return parts;
+    }
+
+    private void finishTransaction() {
+        if (inTransaction) {
+            transactionHandler.finish();
+        }
+        inTransaction = false;
     }
 }
