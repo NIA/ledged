@@ -2,7 +2,8 @@ package ru.nia.jledger.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Parser {
     class ParserException extends Exception {
@@ -11,18 +12,60 @@ public class Parser {
         }
     }
 
-    /* -- fields -- */
+    private interface LineProcessor {
+        boolean canProcess(char firstChar);
+        void process(String line) throws ParserException;
+    }
+
+    private LineProcessor[] lineProcessors = new LineProcessor[] {
+            // comment line
+            new LineProcessor() {
+                public boolean canProcess(char firstChar) {
+                    return firstChar == ';';
+                }
+                public void process(String line) throws ParserException {
+                }
+            },
+
+            // transaction description
+            new LineProcessor() {
+                public boolean canProcess(char firstChar) {
+                    return Character.isDigit(firstChar);
+                }
+                public void process(String line) throws ParserException {
+                    if (inTransaction) {
+                        transactionHandler.finish();
+                    }
+                    inTransaction = true;
+
+                    String[] groups = matchGroups(line, "^([^\\s]+)\\s+(.+)?$");
+                    String date = groups[1];
+                    String description = (groups[2] != null) ? groups[2].trim() : null;
+                    transactionHandler.start(date, description);
+                }
+            },
+
+            // posting
+            new LineProcessor() {
+                public boolean canProcess(char firstChar) {
+                    return Character.isWhitespace(firstChar);
+                }
+                public void process(String line) throws ParserException {
+                    if (!inTransaction) {
+                        throw new ParserException("transaction posting outside transaction", line);
+                    }
+
+                    String[] groups = matchGroups(line, "^\\s+((?:[^\\s]| (?!\\s))*)(?:(?:\\s{2,}|\t\\s*)([^;]+)?)?\\s*(?:;.*)?$");
+                    String account = groups[1];
+                    String amount = (groups[2] != null) ? groups[2].trim() : null;
+                    transactionHandler.addPosting(account, amount);
+                }
+            }
+    };
 
     private BufferedReader input;
     private TransactionHandler transactionHandler;
-
-    /* -- constants -- */
-
-    private static final char COMMENT_CHAR = ';';
-    private static final char YEAR_CHAR = 'Y';
-
-    private static final String TRANSACTION_DELIMITER = " ";
-    private static final String FIELD_DELIMITER = "  ";
+    private boolean inTransaction;
 
     public Parser(BufferedReader input, TransactionHandler transactionHandler) {
         this.input = input;
@@ -30,7 +73,7 @@ public class Parser {
     }
 
     public void parse() throws IOException, ParserException {
-        boolean inTransaction = false;
+        inTransaction = false;
 
         for (;;) {
             final String line = input.readLine();
@@ -41,25 +84,16 @@ public class Parser {
                 continue;
             }
 
-            char switcher = line.charAt(0);
-            if (Character.isDigit(switcher)) {
-                // new transaction
-                if (inTransaction) {
-                    transactionHandler.finish();
+            boolean processed = false;
+            char firstChar = line.charAt(0);
+            for (LineProcessor processor : lineProcessors) {
+                if (processor.canProcess(firstChar)) {
+                    processor.process(line);
+                    processed = true;
+                    break;
                 }
-                inTransaction = true;
-
-                String[] parts = splitIntoTwoParts(line, TRANSACTION_DELIMITER);
-                transactionHandler.start(parts[0], parts[1]);
-            } else if (Character.isSpaceChar(switcher)) {
-                // field line
-                if (!inTransaction) {
-                    throw new ParserException("transaction field outside transaction", line);
-                }
-
-                String[] parts = splitIntoTwoParts(line.trim(), FIELD_DELIMITER);
-                transactionHandler.addField(parts[0], parts[1]);
-            } else {
+            }
+            if (!processed) {
                 throw new ParserException("unsupported format", line);
             }
         }
@@ -69,12 +103,16 @@ public class Parser {
         }
     }
 
-    private String[] splitIntoTwoParts(String line, String delimiter) {
-        if (line.contains(delimiter)) {
-            int pos = line.indexOf(delimiter);
-            return new String[]{ line.substring(0, pos).trim(), line.substring(pos + delimiter.length()).trim() };
-        } else {
-            return new String[]{ line.trim(), null };
+    private String[] matchGroups(String line, String regex) throws ParserException {
+        Matcher matcher = Pattern.compile(regex).matcher(line);
+        if (!matcher.find()) {
+            throw new ParserException("illegal format", line);
         }
+        int groupCount = matcher.groupCount() + 1; // + 1 because 0'th group is entire string and is needed too
+        String[] parts = new String[groupCount];
+        for (int i = 0; i < groupCount; ++i) {
+            parts[i] = matcher.group(i);
+        }
+        return parts;
     }
 }
