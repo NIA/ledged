@@ -33,6 +33,11 @@ public class ParserTest {
     }
 
     @Test
+    public void testParseBlankLine() throws Exception {
+        parse(" ");
+    }
+
+    @Test
     public void testParseOnlyComment() throws Exception {
         parse(
                 "; comment"

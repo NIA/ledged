@@ -89,7 +89,7 @@ public class Parser {
             if (line == null) {
                 break;
             }
-            if (line.isEmpty()) {
+            if (line.trim().isEmpty()) {
                 finishTransaction();
                 continue;
             }
