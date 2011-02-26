@@ -2,10 +2,7 @@ package ru.nia.jledger.core;
 
 import org.junit.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.text.ParseException;
+import java.io.*;
 
 import static org.easymock.EasyMock.*;
 
@@ -17,7 +14,7 @@ public class ParserTest {
         handler = createStrictMock(TransactionHandler.class);
     }
 
-    private void parse(String... strings) throws IOException, ParseException {
+    private void parse(String... strings) throws Exception {
         replay(handler);
 
         String text = "";
@@ -31,7 +28,12 @@ public class ParserTest {
     }
 
     @Test
-    public void testItWorks() throws IOException, ParseException {
+    public void testParseEmptySource() throws Exception {
+        parse();
+    }
+
+    @Test
+    public void testParseSimple() throws Exception {
         handler.start("2011-2-26", "first transaction");
         handler.addField("expenses", "10");
         handler.addField("assets", null);
@@ -41,6 +43,35 @@ public class ParserTest {
                 "2011-2-26 first transaction",
                 "  expenses  10",
                 "  assets"
+        );
+    }
+
+    @Test
+    public void testParseSimpleWithExtraSpaces() throws Exception {
+        handler.start("2011-2-26", "first transaction");
+        handler.addField("expenses", "10");
+        handler.addField("assets", null);
+        handler.finish();
+
+        parse(
+                "2011-2-26  first transaction ",
+                "  expenses   10 ",
+                "  assets   "
+        );
+    }
+
+    @Test(expected = Parser.ParserException.class)
+    public void testThrowWhenFieldIsOutsideTransaction() throws Exception {
+        parse(
+                "  expenses  10"
+        );
+    }
+
+    @Test
+    @Ignore
+    public void testParseYearSet() throws Exception {
+        parse(
+                "Y2011"
         );
     }
 }

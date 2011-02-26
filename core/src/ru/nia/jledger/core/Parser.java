@@ -5,6 +5,12 @@ import java.io.IOException;
 import java.text.ParseException;
 
 public class Parser {
+    class ParserException extends Exception {
+        ParserException(String msg, String line) {
+            super(msg + " in line \"" + line + "\"");
+        }
+    }
+
     /* -- fields -- */
 
     private BufferedReader input;
@@ -23,57 +29,52 @@ public class Parser {
         this.transactionHandler = transactionHandler;
     }
 
-    public boolean isSkipped(String line) {
-        return line.isEmpty() || line.charAt(0) == COMMENT_CHAR
-               /*hack*/
-               || line.charAt(0) == YEAR_CHAR;
-    }
-
-    public boolean isTransaction(String line) {
-        return line.matches("[0-9].*");
-    }
-
-    public String[] splitIntoTwoParts(String line, String delimiter) {
-        if(line.contains(delimiter)) {
-            int pos = line.indexOf(delimiter);
-            return new String[]{ line.substring(0, pos), line.substring(pos + delimiter.length()) };
-        } else {
-            return new String[]{ line, null };
-        }
-    }
-
-    public void parse() throws IOException, ParseException {
+    public void parse() throws IOException, ParserException {
         boolean inTransaction = false;
 
-        String line;
-        while((line = input.readLine()) != null) {
-            line = line.trim();
-
-            if(isSkipped(line)) {
+        for (;;) {
+            final String line = input.readLine();
+            if (line == null) {
+                break;
+            }
+            if (line.isEmpty()) {
                 continue;
             }
 
-            if(isTransaction(line)) {
-                if(inTransaction) {
+            char switcher = line.charAt(0);
+            if (Character.isDigit(switcher)) {
+                // new transaction
+                if (inTransaction) {
                     transactionHandler.finish();
                 }
                 inTransaction = true;
 
                 String[] parts = splitIntoTwoParts(line, TRANSACTION_DELIMITER);
                 transactionHandler.start(parts[0], parts[1]);
-            } else {
-                /* otherwise - field line */
-                if( ! inTransaction ) {
-                    throw new ParseException("transaction field outside transaction", 0);
+            } else if (Character.isSpaceChar(switcher)) {
+                // field line
+                if (!inTransaction) {
+                    throw new ParserException("transaction field outside transaction", line);
                 }
 
-                String[] parts = splitIntoTwoParts(line, FIELD_DELIMITER);
+                String[] parts = splitIntoTwoParts(line.trim(), FIELD_DELIMITER);
                 transactionHandler.addField(parts[0], parts[1]);
+            } else {
+                throw new ParserException("unsupported format", line);
             }
         }
 
-        if(inTransaction) {
+        if (inTransaction) {
             transactionHandler.finish();
+        }
+    }
+
+    private String[] splitIntoTwoParts(String line, String delimiter) {
+        if (line.contains(delimiter)) {
+            int pos = line.indexOf(delimiter);
+            return new String[]{ line.substring(0, pos).trim(), line.substring(pos + delimiter.length()).trim() };
+        } else {
+            return new String[]{ line.trim(), null };
         }
     }
 }
