@@ -39,25 +39,25 @@ public class AccountTest {
 
     @Test
     public void testFindItself() {
-        Account found = root.findOrCreateIndirectChild(new ArrayList<String>());
+        Account found = root.findOrCreateChild();
         assertSame(root, found);
     }
 
     @Test
     public void testFindDirectChild() {
-        Account found = root.findOrCreateIndirectChild(Arrays.asList("B"));
+        Account found = root.findOrCreateChild("B");
         assertSame(B, found);
     }
 
     @Test
     public void testFindIndirectChild() {
-        Account found = root.findOrCreateIndirectChild(Arrays.asList("B", "BB"));
+        Account found = root.findOrCreateChild("B", "BB");
         assertSame(BB, found);
     }
 
     @Test
     public void testCreateDirectChild() {
-        Account created = root.findOrCreateIndirectChild(Arrays.asList("C"));
+        Account created = root.findOrCreateChild("C");
         assertEquals("C", created.getName());
         assertSame(root, created.getParent());
         assertTrue(root.getChildren().contains(created));
@@ -65,7 +65,7 @@ public class AccountTest {
 
     @Test
     public void testCreateIndirectChild() {
-        Account created = root.findOrCreateIndirectChild(Arrays.asList("B", "C"));
+        Account created = root.findOrCreateChild("B", "C");
         assertEquals("C", created.getName());
         assertSame(B, created.getParent());
         assertTrue(B.getChildren().contains(created));
@@ -73,7 +73,7 @@ public class AccountTest {
 
     @Test
     public void testCreateChildChain() {
-        Account created = root.findOrCreateIndirectChild(Arrays.asList("D", "DD"));
+        Account created = root.findOrCreateChild("D", "DD");
         Account parent = created.getParent();
         assertEquals("DD", created.getName());
         assertEquals("D", parent.getName());

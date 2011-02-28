@@ -25,13 +25,22 @@ public class Account {
         return Collections.unmodifiableSet(children);
     }
 
-    public Account addChild(String name) {
+    public Account findOrCreateChild(String... names) {
+        Account child = this;
+
+        for (String childName : names) {
+            child = child.findOrCreateDirectChild(childName);
+        }
+        return child;
+    }
+
+    Account addChild(String name) {
         Account newAccount = new Account(name, this);
         children.add(newAccount);
         return newAccount;
     }
 
-    public Account findOrCreateChild(String name) {
+    Account findOrCreateDirectChild(String name) {
         Account child = null;
         // find direct child...
         for (Account subAccount : children) {
@@ -45,16 +54,5 @@ public class Account {
             child = addChild(name);
         }
         return child;
-    }
-
-    public Account findOrCreateIndirectChild(List<String> names) {
-        if(names.isEmpty()) {
-            return this;
-        }
-
-        Account directChild = findOrCreateChild(names.get(0));
-
-        List<String> remainingNames = names.subList(1, names.size());
-        return directChild.findOrCreateIndirectChild(remainingNames);
     }
 }
