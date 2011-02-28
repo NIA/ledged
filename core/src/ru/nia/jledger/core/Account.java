@@ -1,14 +1,12 @@
 package ru.nia.jledger.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Account {
     private String name;
 
     private Account parent;
-    private ArrayList<Account> children = new ArrayList<Account>();
+    private HashSet<Account> children = new HashSet<Account>();
 
     public Account(String name, Account parent) {
         this.name = name;
@@ -23,8 +21,8 @@ public class Account {
         return parent;
     }
 
-    public List<Account> getChildren() {
-        return Collections.unmodifiableList(children);
+    public Set<Account> getChildren() {
+        return Collections.unmodifiableSet(children);
     }
 
     public Account addChild(String name) {

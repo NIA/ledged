@@ -23,12 +23,18 @@ public class AccountTest {
         assertSame(root, A.getParent());
     }
 
+    private Set<Object> asSet(Object... objs) {
+        return new HashSet<Object>(Arrays.asList(objs));
+    }
+
     @Test
     public void testGetChildren() {
-        List<Account> children = root.getChildren();
-        List<Account> expectedChildren = Arrays.asList(A, B);
-        assertTrue(children.containsAll(expectedChildren));
-        assertEquals(children.size(), expectedChildren.size());
+        assertEquals(root.getChildren(), asSet(A, B));
+    }
+
+    @Test
+    public void testGetChildrenOfLeaf() {
+        assertEquals(AA.getChildren(), asSet());
     }
 
     @Test
