@@ -48,6 +48,7 @@ public class Transaction {
             }
             sb.append('\n');
         }
-        return sb.toString();
+        // TODO: instead of workaround with trim() - normal joining of lines with '\n'
+        return sb.toString().trim();
     }
 }

@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Parser {
-    class ParserException extends Exception {
+    public class ParserException extends Exception {
         ParserException(String msg, String line) {
             super(msg + " in line \"" + line + "\"");
         }
@@ -89,7 +89,7 @@ public class Parser {
             if (line == null) {
                 break;
             }
-            if (line.trim().isEmpty()) {
+            if (line.trim().length() == 0) {
                 finishTransaction();
                 continue;
             }

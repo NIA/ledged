@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">LedgEd</string>
+    <string name="io_error">Ошибка ввода-вывода</string>
+    <string name="parse_error">Неправильный формат файла</string>
+</resources>

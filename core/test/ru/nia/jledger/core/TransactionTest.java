@@ -53,7 +53,7 @@ public class TransactionTest {
         assertEquals(
                 "3-4 Grill Bar\n" +
                 "  A:AA  2.8\n" +
-                "  B\n",
+                "  B",
                 transaction.toString());
     }
 }
