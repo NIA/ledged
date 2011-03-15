@@ -1,11 +1,11 @@
 package ru.nia.jledger.core;
 
+import ru.nia.jledger.core.AccountTree.Account;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import ru.nia.jledger.core.AccountTree.Account;
 
 public class Transaction {
     private String description;

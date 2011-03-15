@@ -1,5 +1,7 @@
 package ru.nia.jledger.core;
 
+import ru.nia.jledger.core.AccountTree.Account;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -7,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import ru.nia.jledger.core.AccountTree.Account;
 
 public class Journal {
     ArrayList<Transaction> transactions = new ArrayList<Transaction>();
