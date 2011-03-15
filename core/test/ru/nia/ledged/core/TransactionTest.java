@@ -1,7 +1,7 @@
-package ru.nia.jledger.core;
+package ru.nia.ledged.core;
 
 import org.junit.*;
-import ru.nia.jledger.core.AccountTree.Account;
+import ru.nia.ledged.core.AccountTree.Account;
 
 import java.math.BigDecimal;
 import java.util.Arrays;

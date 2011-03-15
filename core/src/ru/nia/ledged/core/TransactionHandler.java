@@ -1,4 +1,4 @@
-package ru.nia.jledger.core;
+package ru.nia.ledged.core;
 
 public interface TransactionHandler {
     void setYear(String year);

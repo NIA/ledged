@@ -1,4 +1,4 @@
-package ru.nia.jledger.ledged;
+package ru.nia.ledged.android;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,9 +6,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.Toast;
-import ru.nia.jledger.core.Journal;
-import ru.nia.jledger.core.Parser;
-import ru.nia.jledger.core.Transaction;
+import ru.nia.ledged.core.Journal;
+import ru.nia.ledged.core.Parser;
+import ru.nia.ledged.core.Transaction;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package ru.nia.jledger.core;
+package ru.nia.ledged.core;
 
 import java.util.Collections;
 import java.util.HashSet;

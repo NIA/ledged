@@ -1,4 +1,4 @@
-package ru.nia.jledger.core;
+package ru.nia.ledged.core;
 
 import org.junit.*;
 
@@ -7,7 +7,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.*;
 
-import ru.nia.jledger.core.AccountTree.Account;
+import ru.nia.ledged.core.AccountTree.Account;
 
 import static org.junit.Assert.*;
 

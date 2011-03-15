@@ -1,10 +1,10 @@
-package ru.nia.jledger.ledged;
+package ru.nia.ledged.android;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
-import ru.nia.jledger.core.AccountTree.Account;
-import ru.nia.jledger.core.Journal;
+import ru.nia.ledged.core.AccountTree.Account;
+import ru.nia.ledged.core.Journal;
 
 import java.util.Collections;
 import java.util.List;

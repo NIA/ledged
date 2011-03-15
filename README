@@ -1,0 +1,22 @@
+LedgEd
+========
+
+LedgEd is a cross-platform editor for journal files of Ledger double-entry
+accounting system (https://github.com/jwiegley/ledger).
+
+Core
+~~~~
+
+A back-end providing internal representation of journal file and operations on
+that representations.
+
+Android
+~~~~~~~
+
+An editor front-end for Android.
+
+PC (Coming soon)
+~~~~~~~~~~~~~~~~
+
+A front-end for PC
+
