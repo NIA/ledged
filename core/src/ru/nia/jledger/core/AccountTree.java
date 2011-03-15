@@ -7,7 +7,7 @@ import java.util.Set;
 public class AccountTree {
     private final Account root = new Account(null, null, this);
 
-    public Account findOrCreateChild(String... names) {
+    public Account findOrCreateChild(boolean allowCreation, String... names) {
         if (names.length == 0) {
             throw new IllegalArgumentException("no names given");
         }
@@ -24,8 +24,13 @@ public class AccountTree {
             }
             // ...or create him
             if (next == null) {
-                next = new Account(childName, current, this);
-                current.children.add(next);
+                if (allowCreation) {
+                    next = new Account(childName, current, this);
+                    current.children.add(next);
+                } else {
+                    // or say it's not found (if not allowed to create)
+                    return null;
+                }
             }
             current = next;
         }

@@ -14,6 +14,8 @@ public class Journal {
     ArrayList<Transaction> transactions = new ArrayList<Transaction>();
     AccountTree accounts = new AccountTree();
 
+    public static final String ACCOUNT_SEPARATOR = ":";
+
     public Journal(BufferedReader input) throws IOException, Parser.ParserException {
 
         Parser parser = new Parser(input, new TransactionHandler() {
@@ -24,7 +26,7 @@ public class Journal {
             }
 
             public void addPosting(String accountName, String strAmount) {
-                AccountTree.Account account = accounts.findOrCreateChild(accountName.split(":"));
+                AccountTree.Account account = accounts.findOrCreateChild(true, accountName.split(ACCOUNT_SEPARATOR));
                 BigDecimal amount = (strAmount == null) ? null : new BigDecimal(strAmount);
                 getLastTransaction().addPosting(account, amount);
             }
