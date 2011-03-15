@@ -44,6 +44,31 @@ public class Journal {
         return accounts.getRootAccounts();
     }
 
+    public Account findChild(String... names) {
+        return accounts.findOrCreateChild(false, names);
+    }
+
+    public List<Account> filterAccounts(CharSequence constraint) {
+        String text = constraint.toString();
+        Set<Account> setToFilter;
+        if (text.contains(ACCOUNT_SEPARATOR)) {
+            int sepPos = text.lastIndexOf(ACCOUNT_SEPARATOR);
+            String[] names = text.substring(0, sepPos).split(ACCOUNT_SEPARATOR);
+            Account parent = findChild(names);
+            setToFilter = parent.getChildren();
+        } else {
+            setToFilter = getRootAccounts();
+        }
+
+        List<Account> filtered = new ArrayList<Account>();
+        for (Account a : setToFilter) {
+            if(a.toString().startsWith(text)) {
+                filtered.add(a);
+            }
+        }
+        return filtered;
+    }
+
     private Transaction getLastTransaction() {
         return transactions.get(transactions.size() - 1);
     }

@@ -6,7 +6,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.Toast;
-import ru.nia.jledger.core.AccountTree;
 import ru.nia.jledger.core.Journal;
 import ru.nia.jledger.core.Parser;
 import ru.nia.jledger.core.Transaction;
@@ -14,8 +13,6 @@ import ru.nia.jledger.core.Transaction;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TransactionEditor extends Activity {
     Journal journal;
@@ -48,10 +45,8 @@ public class TransactionEditor extends Activity {
         transactions.setAdapter(
                 new ArrayAdapter<Transaction>(this, R.layout.transaction, R.id.transaction_text, journal.getTransactions()));
 
-        AutoCompleteTextView accName = (AutoCompleteTextView) findViewById(R.id.account);
-        List<AccountTree.Account> accounts = new ArrayList<AccountTree.Account>(journal.getRootAccounts());
-        accName.setAdapter(
-                new ArrayAdapter<AccountTree.Account>(this, R.layout.completion_item, accounts));
+        final AutoCompleteTextView accName = (AutoCompleteTextView) findViewById(R.id.account);
+        accName.setAdapter(new AutoCompleteAdapter(this, R.layout.completion_item, journal));
     }
 
     private BufferedReader buildInput(String... strings) {
