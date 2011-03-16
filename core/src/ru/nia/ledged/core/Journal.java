@@ -55,7 +55,11 @@ public class Journal {
             int sepPos = text.lastIndexOf(ACCOUNT_SEPARATOR);
             String[] names = text.substring(0, sepPos).split(ACCOUNT_SEPARATOR);
             Account parent = findChild(names);
-            setToFilter = parent.getChildren();
+            if (parent != null) {
+                setToFilter = parent.getChildren();
+            } else {
+                setToFilter = Collections.emptySet();
+            }
         } else {
             setToFilter = getRootAccounts();
         }

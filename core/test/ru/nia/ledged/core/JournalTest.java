@@ -21,6 +21,7 @@ public class JournalTest {
                 "",
                 "3-13 first transaction",
                 "  expenses:smth  10",
+                "  extra:smth  20",
                 "  assets",
                 "",
                 "3-14 grill bar",
@@ -45,7 +46,42 @@ public class JournalTest {
         assertEquals("3-13", t.getDate());
         assertEquals("first transaction", t.getDescription());
 
-        assertPostingsEqual(t.getPostings(), "expenses:smth", "10", "assets", null);
+        assertPostingsEqual(t.getPostings(), "expenses:smth", "10", "extra:smth", "20", "assets", null);
+    }
+
+    @Test
+    public void testFilterRoots() throws Exception {
+        assertAccountNamesEqual(journal.filterAccounts("ex"), "expenses", "extra");
+    }
+
+    @Test
+    public void testFilterChildren() throws Exception {
+        assertAccountNamesEqual(journal.filterAccounts("expenses:f"), "expenses:food");
+    }
+
+    @Test
+    public void testFilterAllChildren() throws Exception {
+        assertAccountNamesEqual(journal.filterAccounts("expenses:"), "expenses:food", "expenses:smth");
+    }
+
+    @Test
+    public void testFilterNotFoundRoot() throws Exception {
+        assertAccountNamesEmpty(journal.filterAccounts("notfound"));
+    }
+
+    @Test
+    public void testFilterNotFoundChild() throws Exception {
+        assertAccountNamesEmpty(journal.filterAccounts("expenses:notfound"));
+    }
+
+    @Test
+    public void testFilterNotFoundChildChain() throws Exception {
+        assertAccountNamesEmpty(journal.filterAccounts("notfound:notfound"));
+    }
+
+    @Test
+    public void testEmptyFilter() throws Exception {
+        assertAccountNamesEqual(journal.filterAccounts(""), "expenses", "extra", "people", "assets");
     }
 
     private BufferedReader buildInput(String... strings) {
@@ -65,7 +101,7 @@ public class JournalTest {
         return null;
     }
 
-    private void assertPostingsEqual(Map<Account,BigDecimal> postings, String... args) {
+    private static void assertPostingsEqual(Map<Account,BigDecimal> postings, String... args) {
         assert args.length % 2 == 0;
 
         List<Account> keys = new ArrayList<Account>(postings.keySet());
@@ -75,5 +111,18 @@ public class JournalTest {
             BigDecimal amount = postings.get(keys.get(i));
             assertEquals(args[2*i+1], (amount == null) ? null : amount.toString());
         }
+    }
+
+    private static void assertAccountNamesEmpty(List<Account> accounts) {
+        assertAccountNamesEqual(accounts);
+    }
+
+    private static void assertAccountNamesEqual(List<Account> accounts, String... expectedNames) {
+        Set<String> actual = new HashSet<String>();
+        for (Account a : accounts) {
+            actual.add(a.toString());
+        }
+        Set<String> expected = new HashSet<String>(Arrays.asList(expectedNames));
+        assertEquals(expected, actual);
     }
 }

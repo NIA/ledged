@@ -47,6 +47,7 @@ public class AccountTree {
         StringBuilder sb = new StringBuilder();
         Account current = account.getParent();
         while (current != root) {
+            // TODO: use constant
             sb.insert(0, ":");
             sb.insert(0, current.getName());
             current = current.getParent();
