@@ -1,9 +1,11 @@
 package ru.nia.ledged.android;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 import ru.nia.ledged.core.Journal;
@@ -13,13 +15,16 @@ import ru.nia.ledged.core.Transaction;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class TransactionEditor extends Activity {
+public class TransactionsList extends ListActivity {
     Journal journal;
+    public static final int ADD_ID = Menu.FIRST;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.transaction_editor);
+        setContentView(R.layout.transaction_list);
 
         BufferedReader input = buildInput(
                 "Y2011",
@@ -41,12 +46,46 @@ public class TransactionEditor extends Activity {
             Toast.makeText(this, R.string.parse_error, Toast.LENGTH_SHORT).show();
         }
 
-        ListView transactions = (ListView) findViewById(R.id.transactions);
-        transactions.setAdapter(
-                new ArrayAdapter<Transaction>(this, R.layout.transaction, R.id.transaction_text, journal.getTransactions()));
+        fillList();
+    }
 
-        final AutoCompleteTextView accName = (AutoCompleteTextView) findViewById(R.id.account);
-        accName.setAdapter(new AutoCompleteAdapter(this, R.layout.completion_item, journal));
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean result = super.onCreateOptionsMenu(menu);
+        menu.add(0, ADD_ID, 0, R.string.menu_add);
+        return result;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case ADD_ID:
+                addTransaction();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void fillList() {
+        setListAdapter(
+                new ArrayAdapter<Transaction>(this, R.layout.transaction, R.id.transaction_text, journal.getTransactions()));
+    }
+
+    private void addTransaction() {
+        journal.addTransaction("3-26", "new one", buildMap("expenses:smth", "10", "new account", "-10"));
+        fillList();
+    }
+
+
+    private Map<String, String> buildMap(String... args) {
+        assert args.length % 2 == 0;
+
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        for (int i = 0; i < args.length/2; ++i) {
+            map.put(args[2*i], args[2*i + 1]);
+        }
+        return map;
     }
 
     private BufferedReader buildInput(String... strings) {
