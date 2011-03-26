@@ -5,10 +5,7 @@ import ru.nia.ledged.core.AccountTree.Account;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Journal {
     ArrayList<Transaction> transactions = new ArrayList<Transaction>();
@@ -26,9 +23,7 @@ public class Journal {
             }
 
             public void addPosting(String accountName, String strAmount) {
-                AccountTree.Account account = accounts.findOrCreateChild(true, accountName.split(ACCOUNT_SEPARATOR));
-                BigDecimal amount = (strAmount == null) ? null : new BigDecimal(strAmount);
-                getLastTransaction().addPosting(account, amount);
+                addPostingToTransaction(getLastTransaction(), accountName, strAmount);
             }
 
             public void finish() { }
@@ -75,5 +70,19 @@ public class Journal {
 
     private Transaction getLastTransaction() {
         return transactions.get(transactions.size() - 1);
+    }
+
+    public void addTransaction(String date, String description, Map<String, String> postings) {
+        Transaction t = new Transaction(date, description);
+        for (Map.Entry<String, String> e : postings.entrySet()) {
+            addPostingToTransaction(t, e.getKey(), e.getValue());
+        }
+        transactions.add(t);
+    }
+
+    private void addPostingToTransaction(Transaction t, String accountName, String strAmount) {
+        AccountTree.Account account = accounts.findOrCreateChild(true, accountName.split(ACCOUNT_SEPARATOR));
+        BigDecimal amount = (strAmount == null) ? null : new BigDecimal(strAmount);
+        t.addPosting(account, amount);
     }
 }

@@ -84,6 +84,15 @@ public class JournalTest {
         assertAccountNamesEqual(journal.filterAccounts(""), "expenses", "extra", "people", "assets");
     }
 
+    @Test
+    public void testAddTransaction() throws Exception {
+        journal.addTransaction("3-26", "new one", buildMap("expenses:smth", "10", "new account", "-10"));
+        Transaction t = getLast(journal.getTransactions());
+        assertEquals("new one", t.getDescription());
+        assertEquals("3-26", t.getDate());
+        assertPostingsEqual(t.getPostings(), "expenses:smth", "10", "new account", "-10");
+    }
+
     private BufferedReader buildInput(String... strings) {
         StringBuilder sb = new StringBuilder();
         for (String s : strings) {
@@ -99,6 +108,20 @@ public class JournalTest {
             }
         }
         return null;
+    }
+
+    private Map<String, String> buildMap(String... args) {
+        assert args.length % 2 == 0;
+
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        for (int i = 0; i < args.length/2; ++i) {
+            map.put(args[2*i], args[2*i + 1]);
+        }
+        return map;
+    }
+
+    private <T> T getLast(List<T> list) {
+        return list.get(list.size() - 1);
     }
 
     private static void assertPostingsEqual(Map<Account,BigDecimal> postings, String... args) {
