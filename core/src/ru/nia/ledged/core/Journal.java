@@ -55,7 +55,7 @@ public class Journal {
     }
 
     private void addPostingToTransaction(Transaction t, String accountName, String strAmount) {
-        AccountTree.Account account = accounts.findOrCreateChild(accountName.split(AccountTree.ACCOUNT_SEPARATOR));
+        AccountTree.Account account = accounts.findOrCreateAccount(accountName);
         BigDecimal amount = (strAmount == null) ? null : new BigDecimal(strAmount);
         t.addPosting(account, amount);
     }

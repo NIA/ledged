@@ -14,18 +14,18 @@ public class AccountsTest {
     public void setUp() {
         tree = new AccountTree();
 
-        A = tree.findOrCreateChild("A");
-        AA = tree.findOrCreateChild("A", "AA");
-        B = tree.findOrCreateChild("B");
-        BB = tree.findOrCreateChild("B", "BB");
+        A = tree.findOrCreateAccount("A");
+        AA = tree.findOrCreateAccount("A:AA");
+        B = tree.findOrCreateAccount("B");
+        BB = tree.findOrCreateAccount("B:BB");
 
         filterTree = new AccountTree();
 
-        filterTree.findOrCreateChild("expenses", "smth");
-        filterTree.findOrCreateChild("expenses", "food");
-        filterTree.findOrCreateChild("extra", "smth");
-        filterTree.findOrCreateChild("people", "smith");
-        filterTree.findOrCreateChild("assets", "cash");
+        filterTree.findOrCreateAccount("expenses:smth");
+        filterTree.findOrCreateAccount("expenses:food");
+        filterTree.findOrCreateAccount("extra:smth");
+        filterTree.findOrCreateAccount("people:smith");
+        filterTree.findOrCreateAccount("assets:cash");
     }
 
     private Set<Account> asSet(Account... accounts) {
@@ -49,47 +49,47 @@ public class AccountsTest {
 
     @Test
     public void testFindRoot() {
-        assertEquals(B, tree.findOrCreateChild("B"));
-        assertEquals(B, tree.findChild("B"));
+        assertEquals(B, tree.findOrCreateAccount("B"));
+        assertEquals(B, tree.findAccount("B"));
     }
 
     @Test
     public void testFindNotRoot() {
-        assertEquals(BB, tree.findOrCreateChild("B", "BB"));
-        assertEquals(BB, tree.findChild("B", "BB"));
+        assertEquals(BB, tree.findOrCreateAccount("B:BB"));
+        assertEquals(BB, tree.findAccount("B:BB"));
     }
 
     @Test
     public void testNotFoundRootAcoount() {
-        assertNull(tree.findChild("C"));
+        assertNull(tree.findAccount("C"));
     }
 
     @Test
     public void testCreateRootAcoount() {
-        Account created = tree.findOrCreateChild("C");
+        Account created = tree.findOrCreateAccount("C");
         assertTrue(tree.getRootAccounts().contains(created));
     }
 
     @Test
     public void testNotFoundIndirectChild() {
-        assertNull(tree.findChild("B", "C"));
+        assertNull(tree.findAccount("B:C"));
     }
 
     @Test
     public void testCreateIndirectChild() {
-        Account created = tree.findOrCreateChild("B", "C");
+        Account created = tree.findOrCreateAccount("B:C");
         assertTrue(B.getChildren().contains(created));
     }
 
     @Test
     public void testNotFoundDeep() {
-        assertNull(tree.findChild("D", "DD"));
+        assertNull(tree.findAccount("D:DD"));
     }
 
     @Test
     public void testCreateChildChain() {
-        Account created = tree.findOrCreateChild("D", "DD");
-        Account hisParent = tree.findOrCreateChild("D");
+        Account created = tree.findOrCreateAccount("D:DD");
+        Account hisParent = tree.findOrCreateAccount("D");
         assertTrue(tree.getRootAccounts().contains(hisParent));
         assertTrue(hisParent.getChildren().contains(created));
     }

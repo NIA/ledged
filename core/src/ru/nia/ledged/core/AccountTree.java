@@ -6,10 +6,11 @@ public class AccountTree {
     private final Account root = new Account(null, null, this);
     public static final String ACCOUNT_SEPARATOR = ":";
 
-    private Account findOrCreateChild(boolean allowCreation, String... names) {
-        if (names.length == 0) {
+    private Account findOrCreateAccount(boolean allowCreation, String name) {
+        if (name.length() == 0) {
             throw new IllegalArgumentException("no names given");
         }
+        String[] names = name.split(ACCOUNT_SEPARATOR);
         Account current = root;
 
         for (String childName : names) {
@@ -36,12 +37,12 @@ public class AccountTree {
         return current;
     }
 
-    public Account findChild(String... names) {
-        return findOrCreateChild(false, names);
+    public Account findAccount(String name) {
+        return findOrCreateAccount(false, name);
     }
 
-    public Account findOrCreateChild(String... names) {
-        return findOrCreateChild(true, names);
+    public Account findOrCreateAccount(String name) {
+        return findOrCreateAccount(true, name);
     }
 
     public Set<Account> getRootAccounts() {
@@ -68,8 +69,8 @@ public class AccountTree {
         Set<Account> setToFilter;
         if (constraint.contains(ACCOUNT_SEPARATOR)) {
             int sepPos = constraint.lastIndexOf(ACCOUNT_SEPARATOR);
-            String[] names = constraint.substring(0, sepPos).split(ACCOUNT_SEPARATOR);
-            Account parent = findChild(names);
+            String parentName = constraint.substring(0, sepPos);
+            Account parent = findAccount(parentName);
             if (parent != null) {
                 setToFilter = parent.getChildren();
             } else {
