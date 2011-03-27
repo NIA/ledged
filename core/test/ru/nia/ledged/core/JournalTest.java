@@ -50,41 +50,6 @@ public class JournalTest {
     }
 
     @Test
-    public void testFilterRoots() throws Exception {
-        assertAccountNamesEqual(journal.filterAccounts("ex"), "expenses", "extra");
-    }
-
-    @Test
-    public void testFilterChildren() throws Exception {
-        assertAccountNamesEqual(journal.filterAccounts("expenses:f"), "expenses:food");
-    }
-
-    @Test
-    public void testFilterAllChildren() throws Exception {
-        assertAccountNamesEqual(journal.filterAccounts("expenses:"), "expenses:food", "expenses:smth");
-    }
-
-    @Test
-    public void testFilterNotFoundRoot() throws Exception {
-        assertAccountNamesEmpty(journal.filterAccounts("notfound"));
-    }
-
-    @Test
-    public void testFilterNotFoundChild() throws Exception {
-        assertAccountNamesEmpty(journal.filterAccounts("expenses:notfound"));
-    }
-
-    @Test
-    public void testFilterNotFoundChildChain() throws Exception {
-        assertAccountNamesEmpty(journal.filterAccounts("notfound:notfound"));
-    }
-
-    @Test
-    public void testEmptyFilter() throws Exception {
-        assertAccountNamesEqual(journal.filterAccounts(""), "expenses", "extra", "people", "assets");
-    }
-
-    @Test
     public void testAddTransaction() throws Exception {
         journal.addTransaction("3-26", "new one", buildMap("expenses:smth", "10", "new account", "-10"));
         Transaction t = getLast(journal.getTransactions());
@@ -134,18 +99,5 @@ public class JournalTest {
             BigDecimal amount = postings.get(keys.get(i));
             assertEquals(args[2*i+1], (amount == null) ? null : amount.toString());
         }
-    }
-
-    private static void assertAccountNamesEmpty(List<Account> accounts) {
-        assertAccountNamesEqual(accounts);
-    }
-
-    private static void assertAccountNamesEqual(List<Account> accounts, String... expectedNames) {
-        Set<String> actual = new HashSet<String>();
-        for (Account a : accounts) {
-            actual.add(a.toString());
-        }
-        Set<String> expected = new HashSet<String>(Arrays.asList(expectedNames));
-        assertEquals(expected, actual);
     }
 }

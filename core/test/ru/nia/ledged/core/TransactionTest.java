@@ -19,9 +19,9 @@ public class TransactionTest {
     @Before
     public void setUp() {
         // TODO: some common fixtures for all test classes
-        A = tree.findOrCreateChild(true, "A");
-        AA = tree.findOrCreateChild(true, "A", "AA");
-        B = tree.findOrCreateChild(true, "B");
+        A = tree.findOrCreateChild("A");
+        AA = tree.findOrCreateChild("A", "AA");
+        B = tree.findOrCreateChild("B");
 
         transaction = new Transaction("3-4", "Grill Bar");
     }

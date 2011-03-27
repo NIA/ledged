@@ -1,13 +1,12 @@
 package ru.nia.ledged.core;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class AccountTree {
     private final Account root = new Account(null, null, this);
+    public static final String ACCOUNT_SEPARATOR = ":";
 
-    public Account findOrCreateChild(boolean allowCreation, String... names) {
+    private Account findOrCreateChild(boolean allowCreation, String... names) {
         if (names.length == 0) {
             throw new IllegalArgumentException("no names given");
         }
@@ -37,6 +36,14 @@ public class AccountTree {
         return current;
     }
 
+    public Account findChild(String... names) {
+        return findOrCreateChild(false, names);
+    }
+
+    public Account findOrCreateChild(String... names) {
+        return findOrCreateChild(true, names);
+    }
+
     public Set<Account> getRootAccounts() {
         return root.getChildren();
     }
@@ -55,6 +62,30 @@ public class AccountTree {
         sb.append(account.getName());
 
         return sb.toString();
+    }
+
+    public List<Account> filterAccounts(String constraint) {
+        Set<Account> setToFilter;
+        if (constraint.contains(ACCOUNT_SEPARATOR)) {
+            int sepPos = constraint.lastIndexOf(ACCOUNT_SEPARATOR);
+            String[] names = constraint.substring(0, sepPos).split(ACCOUNT_SEPARATOR);
+            Account parent = findChild(names);
+            if (parent != null) {
+                setToFilter = parent.getChildren();
+            } else {
+                setToFilter = Collections.emptySet();
+            }
+        } else {
+            setToFilter = getRootAccounts();
+        }
+
+        List<Account> filtered = new ArrayList<Account>();
+        for (Account a : setToFilter) {
+            if(a.toString().startsWith(constraint)) {
+                filtered.add(a);
+            }
+        }
+        return filtered;
     }
 
     public static class Account {
