@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 public class AccountsTest {
     AccountTree tree, filterTree;
     Account A, AA, B, BB;
+    String[] filterTreeLeaves;
 
     @Before
     public void setUp() {
@@ -19,13 +20,17 @@ public class AccountsTest {
         B = tree.findOrCreateAccount("B");
         BB = tree.findOrCreateAccount("B:BB");
 
+        filterTreeLeaves = new String[] {
+                "expenses:smth",
+                "expenses:food",
+                "extra:smth",
+                "people:smith",
+                "assets:cash",
+        };
         filterTree = new AccountTree();
-
-        filterTree.findOrCreateAccount("expenses:smth");
-        filterTree.findOrCreateAccount("expenses:food");
-        filterTree.findOrCreateAccount("extra:smth");
-        filterTree.findOrCreateAccount("people:smith");
-        filterTree.findOrCreateAccount("assets:cash");
+        for (String name : filterTreeLeaves) {
+            filterTree.findOrCreateAccount(name);
+        }
     }
 
     private Set<Account> asSet(Account... accounts) {
@@ -139,8 +144,32 @@ public class AccountsTest {
         assertAccountNamesEqual(filterTree.filterAccounts(""), "expenses", "extra", "people", "assets");
     }
 
+    @Test
+    public void testFindLeavesInEmpty() throws Exception {
+        AccountTree emptyTree = new AccountTree();
+        assertAccountNamesEmpty(emptyTree.findLeaves());
+    }
+
+    @Test
+    public void testFindDeepLeaves() throws Exception {
+        assertAccountNamesEqual(tree.findLeaves(), "A:AA", "B:BB");
+    }
+
+    @Test
+    public void testFindLeavesOnlyRoots() throws Exception {
+        AccountTree flatTree = new AccountTree();
+        flatTree.findOrCreateAccount("A");
+        flatTree.findOrCreateAccount("B");
+        assertAccountNamesEqual(flatTree.findLeaves(), "A", "B");
+    }
+
+    @Test
+    public void testFindLeavesMixed() throws Exception {
+        assertAccountNamesEqual(filterTree.findLeaves(), filterTreeLeaves);
+    }
+
     private static void assertAccountNamesEmpty(List<Account> accounts) {
-        assertAccountNamesEqual(accounts);
+        assertTrue(accounts.isEmpty());
     }
 
     private static void assertAccountNamesEqual(List<Account> accounts, String... expectedNames) {

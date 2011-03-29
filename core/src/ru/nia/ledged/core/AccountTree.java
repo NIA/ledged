@@ -89,6 +89,20 @@ public class AccountTree {
         return filtered;
     }
 
+    public List<Account> findLeaves() {
+        ArrayList<Account> leaves = new ArrayList<Account>();
+        ArrayList<Account> accounts = new ArrayList<Account>(getRootAccounts());
+        for (int i = 0; i < accounts.size(); ++i) {
+            Account a = accounts.get(i);
+            if(a.getChildren().isEmpty()) {
+                leaves.add(a);
+            } else {
+                accounts.addAll(a.getChildren());
+            }
+        }
+        return leaves;
+    }
+
     public static class Account {
         private AccountTree tree;
         private String name;
