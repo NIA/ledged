@@ -3,19 +3,19 @@ package ru.nia.ledged.android;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import ru.nia.ledged.core.AccountTree;
 import ru.nia.ledged.core.AccountTree.Account;
-import ru.nia.ledged.core.Journal;
 
 import java.util.Collections;
 import java.util.List;
 
 public class AutoCompleteAdapter extends ArrayAdapter<Account> {
     private List<Account> mData = Collections.emptyList();
-    private Journal journal;
+    private AccountTree accounts;
 
-    public AutoCompleteAdapter(Context context, int textViewResourceId, Journal journal) {
+    public AutoCompleteAdapter(Context context, int textViewResourceId, AccountTree accounts) {
         super(context, textViewResourceId);
-        this.journal = journal;
+        this.accounts = accounts;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<Account> {
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
                 if(constraint != null) {
-                    mData = journal.filterAccounts(constraint);
+                    mData = accounts.filterAccounts(constraint.toString());
                     filterResults.values = mData;
                     filterResults.count = mData.size();
                 }

@@ -1,12 +1,13 @@
 package ru.nia.ledged.android;
 
-import android.app.Activity;
+import android.content.Intent;
+import ru.nia.ledged.core.AccountTree.Account;
+
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 import ru.nia.ledged.core.Journal;
 import ru.nia.ledged.core.Parser;
@@ -15,12 +16,15 @@ import ru.nia.ledged.core.Transaction;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class TransactionsList extends ListActivity {
     Journal journal;
+
     public static final int ADD_ID = Menu.FIRST;
+    public static final int ACTIVITY_CREATE = 0;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,10 +77,35 @@ public class TransactionsList extends ListActivity {
     }
 
     private void addTransaction() {
-        journal.addTransaction("3-26", "new one", buildMap("expenses:smth", "10", "new account", "-10"));
-        fillList();
+        Bundle bundle = new Bundle();
+        List<Account> leaves = journal.findLeavesAccounts();
+        ArrayList<String> leaveNames = new ArrayList<String>(leaves.size());
+        for (Account a : leaves) {
+            leaveNames.add(a.toString());
+        }
+        Intent i = new Intent(this, TransactionEditor.class);
+        i.putStringArrayListExtra(TransactionEditor.KEY_LEAVES_ACCOUNTS, leaveNames);
+        startActivityForResult(i, ACTIVITY_CREATE);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (RESULT_CANCELED == resultCode) {
+            return;
+        }
+
+        Bundle extras = intent.getExtras();
+
+        switch (requestCode) {
+            case ACTIVITY_CREATE:
+                String date = extras.getString(TransactionEditor.KEY_DATE);
+                String description = extras.getString(TransactionEditor.KEY_DESC);
+                journal.addTransaction(date, description, buildMap("expenses:smth", "10", "new account", "-10"));
+                fillList();
+                break;
+        }
+    }
 
     private Map<String, String> buildMap(String... args) {
         assert args.length % 2 == 0;

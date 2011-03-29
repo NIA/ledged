@@ -38,8 +38,8 @@ public class Journal {
         return accounts.getRootAccounts();
     }
 
-    public List<Account> filterAccounts(CharSequence constraint) {
-        return accounts.filterAccounts(constraint.toString());
+    public List<Account> findLeavesAccounts() {
+        return accounts.findLeaves();
     }
 
     private Transaction getLastTransaction() {

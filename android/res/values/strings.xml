@@ -4,4 +4,7 @@
     <string name="parse_error">Неправильный формат файла</string>
     <string name="menu_add">Добавить транзакцию</string>
     <string name="no_transactions">Транзакций пока нет</string>
+    <string name="date">Дата</string>
+    <string name="description">Описание</string>
+    <string name="confirm">Сохранить</string>
 </resources>
