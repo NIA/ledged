@@ -50,7 +50,8 @@ public class TransactionsList extends ListActivity {
             Toast.makeText(this, R.string.parse_error, Toast.LENGTH_SHORT).show();
         }
 
-        fillList();
+        setListAdapter(
+                new ArrayAdapter<Transaction>(this, R.layout.transaction, R.id.transaction_text, journal.getTransactions()));
     }
 
     @Override
@@ -69,11 +70,6 @@ public class TransactionsList extends ListActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void fillList() {
-        setListAdapter(
-                new ArrayAdapter<Transaction>(this, R.layout.transaction, R.id.transaction_text, journal.getTransactions()));
     }
 
     private void addTransaction() {
@@ -102,9 +98,14 @@ public class TransactionsList extends ListActivity {
                 String date = extras.getString(TransactionEditor.KEY_DATE);
                 String description = extras.getString(TransactionEditor.KEY_DESC);
                 journal.addTransaction(date, description, buildMap("expenses:smth", "10", "new account", "-10"));
-                fillList();
+                refreshList();
                 break;
         }
+    }
+
+    void refreshList() {
+        ArrayAdapter<?> adapter = (ArrayAdapter<?>) getListAdapter();
+        adapter.notifyDataSetChanged();
     }
 
     private Map<String, String> buildMap(String... args) {
