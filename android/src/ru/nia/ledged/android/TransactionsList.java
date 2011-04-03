@@ -16,8 +16,6 @@ import ru.nia.ledged.core.Transaction;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TransactionsList extends ListActivity {
@@ -40,6 +38,10 @@ public class TransactionsList extends ListActivity {
                 "3-14 grill bar",
                 "  expenses:food  30",
                 "  people:smith  -10",
+                "  assets:cash",
+                "",
+                "3-14 grill bar",
+                "  expenses:food  30",
                 "  assets:cash"
         );
         try {
@@ -78,8 +80,20 @@ public class TransactionsList extends ListActivity {
         for (int i = 0; i < leaveNames.length; ++i) {
             leaveNames[i] = leaves.get(i).toString();
         }
+
+        List<Transaction> transactions = journal.getTransactions();
+        String[] descriptions = new String[transactions.size()];
+        for (int i = 0; i < descriptions.length; ++i) {
+            descriptions[i] = transactions.get(i).getDescription().trim();
+        }
+        // remove duplicates using HashSet
+        HashSet<String> uniqueDescriptions = new HashSet<String>(Arrays.asList(descriptions));
+        descriptions = new String[uniqueDescriptions.size()];
+        uniqueDescriptions.toArray(descriptions);
+
         Intent i = new Intent(this, TransactionEditor.class);
         i.putExtra(TransactionEditor.KEY_LEAVES_ACCOUNTS, leaveNames);
+        i.putExtra(TransactionEditor.KEY_DESCRIPTIONS, descriptions);
         startActivityForResult(i, ACTIVITY_CREATE);
     }
 

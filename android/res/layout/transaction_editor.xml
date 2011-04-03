@@ -28,8 +28,9 @@
                     android:text="@string/description"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"/>
-            <EditText
+            <AutoCompleteTextView
                     android:id="@+id/description"
+                    android:completionThreshold="2"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"/>
 

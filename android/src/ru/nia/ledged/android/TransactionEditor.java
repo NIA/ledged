@@ -15,7 +15,11 @@ import java.util.Date;
 public class TransactionEditor extends Activity {
     AccountTree accounts = new AccountTree();
 
-    public static String KEY_LEAVES_ACCOUNTS = "leaves";
+    // input data
+    public static final String KEY_LEAVES_ACCOUNTS = "leaves";
+    public static final String KEY_DESCRIPTIONS = "descriptions";
+
+    // output data
     public static final String KEY_DATE = "date";
     public static final String KEY_DESC = "desc";
     public static final String KEY_ACCOUNTS = "accs";
@@ -26,7 +30,7 @@ public class TransactionEditor extends Activity {
 
     private LinearLayout postingsEditors;
     private EditText dateEdit;
-    private EditText descriptionEdit;
+    private AutoCompleteTextView descriptionEdit;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +43,14 @@ public class TransactionEditor extends Activity {
             accounts.findOrCreateAccount(name);
         }
 
+        String[] descriptions = extras.getStringArray(KEY_DESCRIPTIONS);
+
         dateEdit = (EditText) findViewById(R.id.date);
         dateEdit.setText(DateFormat.format("M-d", new Date()));
 
-        // TODO: autocomplete for description
-        descriptionEdit = (EditText) findViewById(R.id.description);
+        descriptionEdit = (AutoCompleteTextView) findViewById(R.id.description);
+        descriptionEdit.setAdapter(new ArrayAdapter<String>(this, R.layout.completion_item, descriptions));
+
         postingsEditors = (LinearLayout) findViewById(R.id.postings);
 
         Button confirmButtion = (Button) findViewById(R.id.confirm);
