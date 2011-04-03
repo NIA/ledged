@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.*;
 import ru.nia.ledged.core.AccountTree;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class TransactionEditor extends Activity {
@@ -34,7 +33,7 @@ public class TransactionEditor extends Activity {
         setContentView(R.layout.transaction_editor);
 
         Bundle extras = getIntent().getExtras();
-        ArrayList<String> leaveNames = extras.getStringArrayList(KEY_LEAVES_ACCOUNTS);
+        String[] leaveNames = extras.getStringArray(KEY_LEAVES_ACCOUNTS);
         assert leaveNames != null;
         for (String name : leaveNames) {
             accounts.findOrCreateAccount(name);

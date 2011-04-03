@@ -73,14 +73,13 @@ public class TransactionsList extends ListActivity {
     }
 
     private void addTransaction() {
-        Bundle bundle = new Bundle();
         List<Account> leaves = journal.findLeavesAccounts();
-        ArrayList<String> leaveNames = new ArrayList<String>(leaves.size());
-        for (Account a : leaves) {
-            leaveNames.add(a.toString());
+        String[] leaveNames = new String[leaves.size()];
+        for (int i = 0; i < leaveNames.length; ++i) {
+            leaveNames[i] = leaves.get(i).toString();
         }
         Intent i = new Intent(this, TransactionEditor.class);
-        i.putStringArrayListExtra(TransactionEditor.KEY_LEAVES_ACCOUNTS, leaveNames);
+        i.putExtra(TransactionEditor.KEY_LEAVES_ACCOUNTS, leaveNames);
         startActivityForResult(i, ACTIVITY_CREATE);
     }
 
