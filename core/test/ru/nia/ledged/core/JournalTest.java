@@ -51,11 +51,11 @@ public class JournalTest {
 
     @Test
     public void testAddTransaction() throws Exception {
-        journal.addTransaction("3-26", "new one", buildMap("expenses:smth", "10", "new account", "-10"));
+        journal.addTransaction("3-26", "new one", arr("expenses:smth", "new account"), arr("10", ""));
         Transaction t = getLast(journal.getTransactions());
         assertEquals("new one", t.getDescription());
         assertEquals("3-26", t.getDate());
-        assertPostingsEqual(t.getPostings(), "expenses:smth", "10", "new account", "-10");
+        assertPostingsEqual(t.getPostings(), "expenses:smth", "10", "new account", null);
     }
 
     private BufferedReader buildInput(String... strings) {
@@ -87,6 +87,10 @@ public class JournalTest {
 
     private <T> T getLast(List<T> list) {
         return list.get(list.size() - 1);
+    }
+
+    private <T> T[] arr(T... items) {
+        return items;
     }
 
     private static void assertPostingsEqual(Map<Account,BigDecimal> postings, String... args) {

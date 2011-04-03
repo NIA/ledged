@@ -46,17 +46,24 @@ public class Journal {
         return transactions.get(transactions.size() - 1);
     }
 
-    public void addTransaction(String date, String description, Map<String, String> postings) {
+    public void addTransaction(String date, String description, String[] accounts, String[] amounts) {
         Transaction t = new Transaction(date, description);
-        for (Map.Entry<String, String> e : postings.entrySet()) {
-            addPostingToTransaction(t, e.getKey(), e.getValue());
+        assert accounts.length == amounts.length;
+
+        for (int i = 0; i < accounts.length; ++i) {
+            addPostingToTransaction(t, accounts[i], amounts[i]);
         }
         transactions.add(t);
     }
 
     private void addPostingToTransaction(Transaction t, String accountName, String strAmount) {
-        AccountTree.Account account = accounts.findOrCreateAccount(accountName);
-        BigDecimal amount = (strAmount == null) ? null : new BigDecimal(strAmount);
+        Account account = accounts.findOrCreateAccount(accountName);
+        BigDecimal amount;
+        if (strAmount == null || strAmount.length() == 0) {
+            amount = null;
+        } else {
+            amount = new BigDecimal(strAmount);
+        }
         t.addPosting(account, amount);
     }
 }
