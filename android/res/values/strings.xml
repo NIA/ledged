@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">LedgEd</string>
-    <string name="io_error">Ошибка ввода-вывода</string>
-    <string name="parse_error">Неправильный формат файла</string>
     <string name="menu_add">Добавить транзакцию</string>
     <string name="no_transactions">Транзакций пока нет</string>
     <string name="date">Дата</string>
     <string name="description">Описание</string>
     <string name="confirm">Сохранить</string>
+    <string name="cancel">Отменить</string>
+    <string name="account">Аккаунт</string>
+    <string name="amount">Сумма</string>
+    <string name="postings">Записи</string>
+    <string name="add_posting">Добавить запись</string>
+    <string name="add_transaction_title">Новая транзакция</string>
 </resources>

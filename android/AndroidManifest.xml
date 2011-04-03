@@ -9,6 +9,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".TransactionEditor"/>
+        <activity android:name=".TransactionEditor" android:label="@string/add_transaction_title"/>
     </application>
 </manifest>

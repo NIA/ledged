@@ -97,7 +97,10 @@ public class TransactionsList extends ListActivity {
             case ACTIVITY_CREATE:
                 String date = extras.getString(TransactionEditor.KEY_DATE);
                 String description = extras.getString(TransactionEditor.KEY_DESC);
-                journal.addTransaction(date, description, buildMap("expenses:smth", "10", "new account", "-10"));
+                String[] accounts = extras.getStringArray(TransactionEditor.KEY_ACCOUNTS);
+                String[] amounts  = extras.getStringArray(TransactionEditor.KEY_AMOUNTS);
+
+                journal.addTransaction(date, description, accounts, amounts);
                 refreshList();
                 break;
         }

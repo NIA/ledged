@@ -1,0 +1,9 @@
+<resources>
+    <string name="io_error">Ошибка ввода-вывода</string>
+    <string name="parse_error">Неправильный формат файла</string>
+    <string name="not_enough_postings">Недостаточно записей, должно быть минимум 2</string>
+    <string name="empty_date">Дата не может быть пустой</string>
+    <string name="empty_description">Описание не может быть пустым</string>
+    <string name="empty_account">Аккаунт не может быть пустым</string>
+    <string name="too_many_empty_amounts">Транзакция может содержать только одну запись с пустой суммой</string>
+</resources>
