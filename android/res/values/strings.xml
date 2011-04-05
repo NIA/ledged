@@ -4,7 +4,7 @@
     <string name="no_transactions">Транзакций пока нет</string>
     <string name="date">Дата</string>
     <string name="description">Описание</string>
-    <string name="confirm">Сохранить</string>
+    <string name="confirm">Готово</string>
     <string name="cancel">Отменить</string>
     <string name="account">Аккаунт</string>
     <string name="amount">Сумма</string>

@@ -124,6 +124,7 @@ public class TransactionEditor extends Activity {
         String desc = descriptionEdit.getText().toString();
         if (desc.trim().length() == 0) {
             reportError(R.string.empty_description);
+            return;
         }
 
         int postingsCount = postingsEditors.getChildCount();
