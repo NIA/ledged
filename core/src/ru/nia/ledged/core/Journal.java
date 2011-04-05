@@ -46,7 +46,7 @@ public class Journal {
         return transactions.get(transactions.size() - 1);
     }
 
-    public void addTransaction(String date, String description, String[] accounts, String[] amounts) {
+    public Transaction addTransaction(String date, String description, String[] accounts, String[] amounts) {
         Transaction t = new Transaction(date, description);
         assert accounts.length == amounts.length;
 
@@ -54,6 +54,7 @@ public class Journal {
             addPostingToTransaction(t, accounts[i], amounts[i]);
         }
         transactions.add(t);
+        return t;
     }
 
     private void addPostingToTransaction(Transaction t, String accountName, String amount) {

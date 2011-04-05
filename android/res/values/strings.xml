@@ -11,4 +11,5 @@
     <string name="postings">Записи</string>
     <string name="add_posting">Добавить запись</string>
     <string name="add_transaction_title">Новая транзакция</string>
+    <string name="menu_save">Сохранить</string>
 </resources>

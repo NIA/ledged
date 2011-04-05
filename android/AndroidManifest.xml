@@ -8,6 +8,16 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT"/>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:pathPattern=".*\\.ledger"/>
+                <data android:scheme="file"/>
+                <data android:mimeType="text/*"/>
+                <data android:host="*"/>
+            </intent-filter>
         </activity>
         <activity android:name=".TransactionEditor" android:label="@string/add_transaction_title"/>
     </application>

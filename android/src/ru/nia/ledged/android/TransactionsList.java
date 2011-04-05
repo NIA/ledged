@@ -1,6 +1,8 @@
 package ru.nia.ledged.android;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.view.MenuInflater;
 import ru.nia.ledged.core.AccountTree.Account;
 
 import android.app.ListActivity;
@@ -13,61 +15,73 @@ import ru.nia.ledged.core.Journal;
 import ru.nia.ledged.core.Parser;
 import ru.nia.ledged.core.Transaction;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.util.*;
 
 public class TransactionsList extends ListActivity {
     Journal journal;
 
-    public static final int ADD_ID = Menu.FIRST;
     public static final int ACTIVITY_CREATE = 0;
+
+    private String filename;
+    ArrayList<Transaction> unsavedTransactions = new ArrayList<Transaction>();
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.transaction_list);
+        Uri uri = getIntent().getData();
+        if (uri != null) {
+            filename = uri.getPath();
+        }
 
-        BufferedReader input = buildInput(
-                "Y2011",
-                "",
-                "3-13 first transaction",
-                "  expenses:smth  10",
-                "  assets",
-                "",
-                "3-14 grill bar",
-                "  expenses:food  30",
-                "  people:smith  -10",
-                "  assets:cash",
-                "",
-                "3-14 grill bar",
-                "  expenses:food  30",
-                "  assets:cash"
-        );
         try {
-            journal = new Journal(input);
+            parseFile();
         } catch (IOException e) {
-            Toast.makeText(this, R.string.io_error, Toast.LENGTH_SHORT).show();
+            reportError(R.string.io_error);
+            return;
         } catch (Parser.ParserException e) {
-            Toast.makeText(this, R.string.parse_error, Toast.LENGTH_SHORT).show();
+            reportError(R.string.parse_error);
+            return;
         }
 
         setListAdapter(
                 new ArrayAdapter<Transaction>(this, R.layout.transaction, R.id.transaction_text, journal.getTransactions()));
     }
 
+    private void parseFile() throws IOException, Parser.ParserException {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(filename);
+            BufferedReader input = new BufferedReader(reader);
+            journal = new Journal(input);
+        }
+        finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean result = super.onCreateOptionsMenu(menu);
-        menu.add(0, ADD_ID, 0, R.string.menu_add);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
         return result;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case ADD_ID:
+            case R.id.add_transaction:
                 addTransaction();
+                return true;
+            case R.id.save:
+                try {
+                    save();
+                } catch (IOException e) {
+                    reportError(R.string.io_error);
+                }
                 return true;
         }
 
@@ -113,7 +127,8 @@ public class TransactionsList extends ListActivity {
                 String[] accounts = extras.getStringArray(TransactionEditor.KEY_ACCOUNTS);
                 String[] amounts  = extras.getStringArray(TransactionEditor.KEY_AMOUNTS);
 
-                journal.addTransaction(date, description, accounts, amounts);
+                Transaction t = journal.addTransaction(date, description, accounts, amounts);
+                unsavedTransactions.add(t);
                 refreshList();
                 break;
         }
@@ -124,21 +139,19 @@ public class TransactionsList extends ListActivity {
         adapter.notifyDataSetChanged();
     }
 
-    private Map<String, String> buildMap(String... args) {
-        assert args.length % 2 == 0;
+    void save() throws IOException {
+        FileWriter fileWriter = new FileWriter(filename, true);
 
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        for (int i = 0; i < args.length/2; ++i) {
-            map.put(args[2*i], args[2*i + 1]);
+        for (Transaction t : unsavedTransactions) {
+            fileWriter.write(t.toString());
+            fileWriter.write("\n\n");
         }
-        return map;
+        fileWriter.close();
+
+        unsavedTransactions.clear();
     }
 
-    private BufferedReader buildInput(String... strings) {
-        StringBuilder sb = new StringBuilder();
-        for (String s : strings) {
-            sb.append(s).append('\n');
-        }
-        return new BufferedReader(new StringReader(sb.toString()));
+    private void reportError(int message_res_id) {
+        Toast.makeText(this, message_res_id, Toast.LENGTH_LONG).show();
     }
 }
