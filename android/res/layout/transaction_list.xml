@@ -7,7 +7,9 @@
     <ListView
             android:id="@+id/android:list"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"/>
+            android:layout_height="fill_parent"
+            android:transcriptMode="alwaysScroll"
+            android:stackFromBottom="true"/>
     <TextView
             android:id="@+id/android:empty"
             android:layout_width="wrap_content"
