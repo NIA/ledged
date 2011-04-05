@@ -38,16 +38,15 @@ public class TransactionTest {
 
     @Test
     public void testAddPosting() {
-        BigDecimal amount = BigDecimal.valueOf(2);
-        transaction.addPosting(A, amount);
+        transaction.addPosting(A, "2");
 
         assertEquals(asSet(A), transaction.getPostings().keySet());
-        assertEquals(amount, transaction.getPostings().get(A));
+        assertEquals("2", transaction.getPostings().get(A));
     }
 
     @Test
     public void testToString() {
-        transaction.addPosting(AA, new BigDecimal("2.8"));
+        transaction.addPosting(AA, "2.8");
         transaction.addPosting(B, null);
 
         assertEquals(

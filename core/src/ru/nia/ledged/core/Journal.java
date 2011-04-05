@@ -56,13 +56,10 @@ public class Journal {
         transactions.add(t);
     }
 
-    private void addPostingToTransaction(Transaction t, String accountName, String strAmount) {
+    private void addPostingToTransaction(Transaction t, String accountName, String amount) {
         Account account = accounts.findOrCreateAccount(accountName);
-        BigDecimal amount;
-        if (strAmount == null || strAmount.length() == 0) {
+        if (amount != null && amount.length() == 0) {
             amount = null;
-        } else {
-            amount = new BigDecimal(strAmount);
         }
         t.addPosting(account, amount);
     }

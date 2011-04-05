@@ -10,14 +10,16 @@ import java.util.Map;
 public class Transaction {
     private String description;
     private String date;
-    private LinkedHashMap<Account,BigDecimal> postings = new LinkedHashMap<Account, BigDecimal>();
+    private LinkedHashMap<Account,String> postings = new LinkedHashMap<Account, String>();
 
     public Transaction(String date, String description) {
         this.date = date;
         this.description = description;
     }
 
-    public void addPosting(Account account, BigDecimal amount) {
+    public void addPosting(Account account, String amount) {
+        // TODO: handle repetitions
+        // TODO: arithmetic expressions
         postings.put(account, amount);
     }
 
@@ -29,7 +31,7 @@ public class Transaction {
         return date;
     }
 
-    public Map<Account, BigDecimal> getPostings() {
+    public Map<Account, String> getPostings() {
         return Collections.unmodifiableMap(postings);
     }
 
@@ -38,9 +40,9 @@ public class Transaction {
         sb.append(date).append(' ').append(description).append('\n');
 
         //TODO: customize indent size
-        for (Map.Entry<Account, BigDecimal> entry : postings.entrySet()) {
+        for (Map.Entry<Account, String> entry : postings.entrySet()) {
             Account account = entry.getKey();
-            BigDecimal amount = entry.getValue();
+            String amount = entry.getValue();
 
             sb.append("  ").append(account.toString());
             if (amount != null) {

@@ -93,15 +93,15 @@ public class JournalTest {
         return items;
     }
 
-    private static void assertPostingsEqual(Map<Account,BigDecimal> postings, String... args) {
+    private static void assertPostingsEqual(Map<Account,String> postings, String... args) {
         assert args.length % 2 == 0;
 
         List<Account> keys = new ArrayList<Account>(postings.keySet());
         assertEquals(args.length/2, keys.size());
         for (int i = 0; i < args.length/2; ++i) {
             assertEquals(args[2*i], keys.get(i).toString());
-            BigDecimal amount = postings.get(keys.get(i));
-            assertEquals(args[2*i+1], (amount == null) ? null : amount.toString());
+            String amount = postings.get(keys.get(i));
+            assertEquals(args[2*i+1], amount);
         }
     }
 }
