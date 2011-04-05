@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import ru.nia.ledged.core.AccountTree;
 
@@ -47,6 +49,13 @@ public class TransactionEditor extends Activity {
 
         dateEdit = (EditText) findViewById(R.id.date);
         dateEdit.setText(DateFormat.format("M-d", new Date()));
+        dateEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                View next = textView.focusSearch(View.FOCUS_DOWN);
+                next.requestFocus();
+                return true;
+            }
+        });
 
         descriptionEdit = (AutoCompleteTextView) findViewById(R.id.description);
         descriptionEdit.setAdapter(new ArrayAdapter<String>(this, R.layout.completion_item, descriptions));
@@ -83,6 +92,17 @@ public class TransactionEditor extends Activity {
 
         AutoCompleteTextView accName = (AutoCompleteTextView) postingEditor.findViewById(R.id.account);
         accName.setAdapter(new AutoCompleteAdapter(this, R.layout.completion_item, accounts));
+        accName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    AutoCompleteTextView view = (AutoCompleteTextView) textView;
+                    view.getText().insert(view.getSelectionStart(), AccountTree.ACCOUNT_SEPARATOR);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
 
         ImageButton delete = (ImageButton) postingEditor.findViewById(R.id.delete);
         delete.setOnClickListener(new View.OnClickListener() {

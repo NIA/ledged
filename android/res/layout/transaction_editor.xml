@@ -21,7 +21,9 @@
             <EditText
                     android:id="@+id/date"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:nextFocusDown="@+id/description"/>
 
             <TextView
                     style="@style/EditorLabel"
@@ -32,7 +34,9 @@
                     android:id="@+id/description"
                     android:completionThreshold="2"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content">
+                <requestFocus/>
+            </AutoCompleteTextView>
 
             <TextView
                     style="@style/EditorLabel"
