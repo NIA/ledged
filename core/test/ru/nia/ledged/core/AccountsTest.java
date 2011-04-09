@@ -111,48 +111,49 @@ public class AccountsTest {
 
     @Test
     public void testFilterRoots() throws Exception {
-        assertAccountNamesEqual(filterTree.filterAccounts("ex"), "expenses", "extra");
+        assertNamesEqual(filterTree.filterAccountNames("ex"), "expenses", "extra");
+
     }
 
     @Test
     public void testFilterChildren() throws Exception {
-        assertAccountNamesEqual(filterTree.filterAccounts("expenses:f"), "expenses:food");
+        assertNamesEqual(filterTree.filterAccountNames("expenses:f"), "expenses:food");
     }
 
     @Test
     public void testFilterAllChildren() throws Exception {
-        assertAccountNamesEqual(filterTree.filterAccounts("expenses:"), "expenses:food", "expenses:smth");
+        assertNamesEqual(filterTree.filterAccountNames("expenses:"), "expenses:food", "expenses:smth");
     }
 
     @Test
     public void testFilterNotFoundRoot() throws Exception {
-        assertAccountNamesEmpty(filterTree.filterAccounts("notfound"));
+        assertNamesEmpty(filterTree.filterAccountNames("notfound"));
     }
 
     @Test
     public void testFilterNotFoundChild() throws Exception {
-        assertAccountNamesEmpty(filterTree.filterAccounts("expenses:notfound"));
+        assertNamesEmpty(filterTree.filterAccountNames("expenses:notfound"));
     }
 
     @Test
     public void testFilterNotFoundChildChain() throws Exception {
-        assertAccountNamesEmpty(filterTree.filterAccounts("notfound:notfound"));
+        assertNamesEmpty(filterTree.filterAccountNames("notfound:notfound"));
     }
 
     @Test
     public void testEmptyFilter() throws Exception {
-        assertAccountNamesEqual(filterTree.filterAccounts(""), "expenses", "extra", "people", "assets");
+        assertNamesEqual(filterTree.filterAccountNames(""), "expenses", "extra", "people", "assets");
     }
 
     @Test
     public void testFindLeavesInEmpty() throws Exception {
         AccountTree emptyTree = new AccountTree();
-        assertAccountNamesEmpty(emptyTree.findLeaves());
+        assertNamesEmpty(emptyTree.findLeaves());
     }
 
     @Test
     public void testFindDeepLeaves() throws Exception {
-        assertAccountNamesEqual(tree.findLeaves(), "A:AA", "B:BB");
+        assertNamesEqual(tree.findLeaves(), "A:AA", "B:BB");
     }
 
     @Test
@@ -160,22 +161,22 @@ public class AccountsTest {
         AccountTree flatTree = new AccountTree();
         flatTree.findOrCreateAccount("A");
         flatTree.findOrCreateAccount("B");
-        assertAccountNamesEqual(flatTree.findLeaves(), "A", "B");
+        assertNamesEqual(flatTree.findLeaves(), "A", "B");
     }
 
     @Test
     public void testFindLeavesMixed() throws Exception {
-        assertAccountNamesEqual(filterTree.findLeaves(), filterTreeLeaves);
+        assertNamesEqual(filterTree.findLeaves(), filterTreeLeaves);
     }
 
-    private static void assertAccountNamesEmpty(List<Account> accounts) {
+    private static <T> void assertNamesEmpty(List<T> accounts) {
         assertTrue(accounts.isEmpty());
     }
 
-    private static void assertAccountNamesEqual(List<Account> accounts, String... expectedNames) {
+    private static <T> void assertNamesEqual(List<T> objects, String... expectedNames) {
         Set<String> actual = new HashSet<String>();
-        for (Account a : accounts) {
-            actual.add(a.toString());
+        for (T named : objects) {
+            actual.add(named.toString());
         }
         Set<String> expected = new HashSet<String>(Arrays.asList(expectedNames));
         assertEquals(expected, actual);

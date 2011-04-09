@@ -9,8 +9,8 @@ import ru.nia.ledged.core.AccountTree.Account;
 import java.util.Collections;
 import java.util.List;
 
-public class AutoCompleteAdapter extends ArrayAdapter<Account> {
-    private List<Account> mData = Collections.emptyList();
+public class AutoCompleteAdapter extends ArrayAdapter<String> {
+    private List<String> filtered = Collections.emptyList();
     private AccountTree accounts;
 
     public AutoCompleteAdapter(Context context, int textViewResourceId, AccountTree accounts) {
@@ -20,12 +20,12 @@ public class AutoCompleteAdapter extends ArrayAdapter<Account> {
 
     @Override
     public int getCount() {
-        return mData.size();
+        return filtered.size();
     }
 
     @Override
-    public Account getItem(int index) {
-        return mData.get(index);
+    public String getItem(int index) {
+        return filtered.get(index);
     }
 
     @Override
@@ -35,9 +35,10 @@ public class AutoCompleteAdapter extends ArrayAdapter<Account> {
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
                 if(constraint != null) {
-                    mData = accounts.filterAccounts(constraint.toString());
-                    filterResults.values = mData;
-                    filterResults.count = mData.size();
+                    filtered = accounts.filterAccountNames(constraint.toString());
+                    Collections.sort(filtered);
+                    filterResults.values = filtered;
+                    filterResults.count = filtered.size();
                 }
                 return filterResults;
             }

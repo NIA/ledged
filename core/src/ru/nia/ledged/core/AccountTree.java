@@ -65,7 +65,7 @@ public class AccountTree {
         return sb.toString();
     }
 
-    public List<Account> filterAccounts(String constraint) {
+    public List<String> filterAccountNames(String constraint) {
         Set<Account> setToFilter;
         if (constraint.contains(ACCOUNT_SEPARATOR)) {
             int sepPos = constraint.lastIndexOf(ACCOUNT_SEPARATOR);
@@ -80,10 +80,11 @@ public class AccountTree {
             setToFilter = getRootAccounts();
         }
 
-        List<Account> filtered = new ArrayList<Account>();
+        List<String> filtered = new ArrayList<String>();
         for (Account a : setToFilter) {
-            if(a.toString().startsWith(constraint)) {
-                filtered.add(a);
+            String name = a.toString();
+            if(name.startsWith(constraint)) {
+                filtered.add(name);
             }
         }
         return filtered;
