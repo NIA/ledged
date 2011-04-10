@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import ru.nia.ledged.core.Journal;
 import ru.nia.ledged.core.Parser;
 import ru.nia.ledged.core.Transaction;
@@ -37,10 +36,10 @@ public class TransactionsList extends ListActivity {
         try {
             parseFile();
         } catch (IOException e) {
-            reportError(R.string.io_error);
+            reportErrorAndFinish(R.string.io_error, e.getLocalizedMessage());
             return;
         } catch (Parser.ParserException e) {
-            reportError(R.string.parse_error);
+            reportErrorAndFinish(R.string.parse_error, formatParserError(e));
             return;
         }
 
@@ -80,7 +79,7 @@ public class TransactionsList extends ListActivity {
                 try {
                     save();
                 } catch (IOException e) {
-                    reportError(R.string.io_error);
+                    reportError(R.string.io_error, e.getLocalizedMessage());
                 }
                 return true;
         }
@@ -151,7 +150,34 @@ public class TransactionsList extends ListActivity {
         unsavedTransactions.clear();
     }
 
-    private void reportError(int message_res_id) {
-        Toast.makeText(this, message_res_id, Toast.LENGTH_LONG).show();
+    private void reportErrorAndFinish(int titleResId, String message) {
+        new MessageDialog(this, titleResId, message, true).show();
+    }
+
+    private void reportError(int titleResId, String message) {
+        new MessageDialog(this, titleResId, message, false).show();
+    }
+
+    private String formatParserError(Parser.ParserException e) {
+        StringBuilder sb = new StringBuilder();
+        int problemId;
+        switch (e.getProblem()) {
+            case WHITESPACE_OUTSIDE_TRANSACTION:
+                problemId = R.string.whitespace_outside_transaction;
+                break;
+            case UNSUPPORTED_BEGINNING:
+                problemId = R.string.unsupported_beginning;
+                break;
+            case ILLEGAL_FORMAT:
+                problemId = R.string.illegal_format;
+                break;
+            default:
+                problemId = R.string.parse_error;
+                break;
+        }
+        sb.append(getString(problemId)).append(" ");
+        sb.append(getString(R.string.in_line)).append(" ").append(e.getLineNubmer());
+        sb.append(" \"").append(e.getLine()).append("\"");
+        return sb.toString();
     }
 }

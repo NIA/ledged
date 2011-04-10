@@ -6,12 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Parser {
-    public class ParserException extends Exception {
-        ParserException(String msg, String line) {
-            super(msg + " in line \"" + line + "\"");
-        }
-    }
-
     private interface LineProcessor {
         boolean canProcess(char firstChar);
         void process(String line) throws ParserException;
@@ -61,7 +55,7 @@ public class Parser {
                 }
                 public void process(String line) throws ParserException {
                     if (!inTransaction) {
-                        throw new ParserException("line begins with whitespace outside transaction", line);
+                        throw new ParserException(Problem.WHITESPACE_OUTSIDE_TRANSACTION, line, lineNumber);
                     }
 
                     String[] groups = matchGroups(line, "^\\s+((?:[^\\s]| (?!\\s))*)(?:(?:\\s{2,}|\t\\s*)([^;]+)?)?\\s*(?:;.*)?$");
@@ -75,6 +69,7 @@ public class Parser {
     private BufferedReader input;
     private TransactionHandler transactionHandler;
     private boolean inTransaction;
+    private int lineNumber;
 
     public Parser(BufferedReader input, TransactionHandler transactionHandler) {
         this.input = input;
@@ -83,9 +78,11 @@ public class Parser {
 
     public void parse() throws IOException, ParserException {
         inTransaction = false;
+        lineNumber = 0;
 
         for (;;) {
             final String line = input.readLine();
+            ++lineNumber;
             if (line == null) {
                 break;
             }
@@ -104,7 +101,7 @@ public class Parser {
                 }
             }
             if (!processed) {
-                throw new ParserException("unsupported format", line);
+                throw new ParserException(Problem.UNSUPPORTED_BEGINNING, line, lineNumber);
             }
         }
 
@@ -116,7 +113,7 @@ public class Parser {
     private String[] matchGroups(String line, String regex) throws ParserException {
         Matcher matcher = Pattern.compile(regex).matcher(line);
         if (!matcher.find()) {
-            throw new ParserException("illegal format", line);
+            throw new ParserException(Problem.ILLEGAL_FORMAT, line, lineNumber);
         }
         int groupCount = matcher.groupCount() + 1; // + 1 because 0'th group is entire string and is needed too
         String[] parts = new String[groupCount];
@@ -131,5 +128,36 @@ public class Parser {
             transactionHandler.finish();
         }
         inTransaction = false;
+    }
+
+    public enum Problem {
+        WHITESPACE_OUTSIDE_TRANSACTION,
+        UNSUPPORTED_BEGINNING,
+        ILLEGAL_FORMAT
+    }
+
+    public class ParserException extends Exception {
+        private final Problem problem;
+        private final String line;
+        private final int lineNubmer;
+
+        ParserException(Problem problem, String line, int lineNubmer) {
+            super(problem.toString() + " in line " + Integer.toString(lineNubmer) + " \"" + line + "\"");
+            this.problem = problem;
+            this.line = line;
+            this.lineNubmer = lineNubmer;
+        }
+
+        public Problem getProblem() {
+            return problem;
+        }
+
+        public String getLine() {
+            return line;
+        }
+
+        public int getLineNubmer() {
+            return lineNubmer;
+        }
     }
 }
