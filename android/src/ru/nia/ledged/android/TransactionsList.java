@@ -2,6 +2,7 @@ package ru.nia.ledged.android;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.view.MenuInflater;
 import ru.nia.ledged.core.AccountTree.Account;
 
@@ -23,7 +24,7 @@ public class TransactionsList extends ListActivity {
     public static final int ACTIVITY_CREATE = 0;
 
     private String filename;
-    ArrayList<Transaction> unsavedTransactions = new ArrayList<Transaction>();
+    ArrayList<Transaction> unsavedTransactions = new ArrayList<>();
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +32,8 @@ public class TransactionsList extends ListActivity {
         Uri uri = getIntent().getData();
         if (uri != null) {
             filename = uri.getPath();
+        } else {
+            filename = new File(Environment.getExternalStorageDirectory(), getString(R.string.default_filename)).getAbsolutePath();
         }
 
         try {
@@ -44,7 +47,7 @@ public class TransactionsList extends ListActivity {
         }
 
         setListAdapter(
-                new ArrayAdapter<Transaction>(this, R.layout.transaction, R.id.transaction_text, journal.getTransactions()));
+                new ArrayAdapter<>(this, R.layout.transaction, R.id.transaction_text, journal.getTransactions()));
     }
 
     private void parseFile() throws IOException, Parser.ParserException {
@@ -100,7 +103,7 @@ public class TransactionsList extends ListActivity {
             descriptions[i] = transactions.get(i).getDescription().trim();
         }
         // remove duplicates using HashSet
-        HashSet<String> uniqueDescriptions = new HashSet<String>(Arrays.asList(descriptions));
+        HashSet<String> uniqueDescriptions = new HashSet<>(Arrays.asList(descriptions));
         descriptions = new String[uniqueDescriptions.size()];
         uniqueDescriptions.toArray(descriptions);
 

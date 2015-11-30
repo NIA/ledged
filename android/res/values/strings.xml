@@ -13,4 +13,5 @@
     <string name="add_transaction_title">Новая транзакция</string>
     <string name="menu_save">Сохранить</string>
     <string name="ok">OK</string>
+    <string name="default_filename">my.ledger</string>
 </resources>
