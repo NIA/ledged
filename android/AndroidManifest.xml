@@ -3,7 +3,7 @@
           package="ru.nia.ledged.android">
     <uses-sdk android:minSdkVersion="9"/>
     <application android:icon="@drawable/icon"
-                 android:label="@string/app_name" android:debuggable="true">
+                 android:label="@string/app_name">
         <activity android:name=".TransactionsList" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

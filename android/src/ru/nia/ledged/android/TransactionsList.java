@@ -46,8 +46,7 @@ public class TransactionsList extends ListActivity {
             return;
         }
 
-        setListAdapter(
-                new ArrayAdapter<>(this, R.layout.transaction, R.id.transaction_text, journal.getTransactions()));
+        setListAdapter(new TransactionFormatAdapter(this, R.layout.transaction, R.id.transaction_text, journal.getTransactions()));
     }
 
     private void parseFile() throws IOException, Parser.ParserException {
