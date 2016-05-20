@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.MenuInflater;
+import android.widget.TextView;
 import ru.nia.ledged.core.AccountTree.Account;
 
 import android.app.ListActivity;
@@ -35,6 +36,8 @@ public class TransactionsList extends ListActivity {
         } else {
             filename = new File(Environment.getExternalStorageDirectory(), getString(R.string.default_filename)).getAbsolutePath();
         }
+        TextView filenameView = (TextView) findViewById(R.id.file_name);
+        filenameView.setText(filename);
 
         try {
             parseFile();
@@ -132,6 +135,15 @@ public class TransactionsList extends ListActivity {
                 unsavedTransactions.add(t);
                 refreshList();
                 break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (unsavedTransactions.isEmpty()) {
+            // FIXME: show question dialog
+        } else {
+            finish();
         }
     }
 
